@@ -1,0 +1,15 @@
+BLACKJACK - The Gold Room  (v@VERSION@)
+==================================================
+
+Developed & Published by ... Ironite
+Game Design ................ Ironite
+Card Art & Illustration .... Ironite
+Music ...................... Ironite
+  "Velvet Hour", "Last Call at the Gold Room", "Midnight Felt"
+Sound Effects .............. Ironite
+Programming ................ Ironite
+Typefaces .................. Italiana, Lora & Outfit
+                             (SIL Open Font License, see OFL.txt)
+
+Copyright (c) 2026 Ironite. All rights reserved.
+Play money only: chips have no cash value.

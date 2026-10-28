@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blackjack</title>
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+  <header id="bar">
+    <div class="title">Blackjack<small>The Gold Room</small></div>
+    <label class="deckSel" title="Number of decks in the shoe. A change reshuffles before the next hand.">
+      <select id="sDecks"><option value="1">Single Deck</option><option value="2">Double Deck</option><option value="6">6-Deck Shoe</option></select>
+    </label>
+    <button id="bRules" title="How to play">How to Play</button>
+    <span class="sep"></span>
+    <button id="bMusic" title="Music (M)">&#9835; Music</button>
+    <input id="vol" type="range" min="0" max="100" title="Volume">
+    <button id="bSfx" title="Sound effects">Sounds</button>
+    <button id="bCredits2" title="Credits and changelog">Credits</button>
+    <div class="stats"><span>Hands <b id="sHands">0</b></span><span>Won <b id="sWon">0</b></span><span>Blackjacks <b id="sBJ">0</b></span></div>
+  </header>
+
+  <main id="table">
+    <canvas id="scene"></canvas>
+    <div id="plaque"><div class="pl-k">This Table</div><div class="pl-d" id="plDecks">Single Deck</div><div class="pl-r">Blackjack pays 3:2<br>Dealer stands on 17<br>Bets 5 &ndash; 5,000</div></div>
+    <div id="shoeLabel"><b id="shoeCount">52</b><span>cards in the shoe</span></div>
+    <div id="labels"></div>
+    <div id="cards"></div>
+    <div id="banner"></div>
+    <canvas id="fx"></canvas>
+
+    <div id="console">
+      <div class="bank">
+        <div class="k">Balance</div>
+        <div class="v" id="balance">1,000</div>
+        <div class="sub">Bet <b id="betNow">0</b></div>
+      </div>
+      <div class="center">
+        <div id="betBar" class="bar">
+          <div class="chipRow" id="chipRow"></div>
+          <div class="btns"><button class="act ghost" id="bClear" title="Clear bet (Backspace)">Clear</button><button class="act gold" id="bDeal" title="Deal (Enter)">Deal</button></div>
+          <div class="restock hidden" id="restock"><span>Out of chips? The house will stake you another <b>1,000</b> play chips.</span><button class="act gold" id="bRestock">Restock Chips</button></div>
+        </div>
+        <div id="playBar" class="bar hidden">
+          <button class="act" id="bHit"><b>Hit</b><kbd>H</kbd></button>
+          <button class="act" id="bStand"><b>Stand</b><kbd>S</kbd></button>
+          <button class="act" id="bDouble"><b>Double</b><kbd>D</kbd></button>
+          <button class="act" id="bSplit"><b>Split</b><kbd>P</kbd></button>
+        </div>
+      </div>
+      <div class="status"><div class="k">Table</div><div id="msg">Place your bet.</div></div>
+    </div>
+    <div id="nowPlaying"></div>
+    <div id="ver"></div>
+  </main>
+
+  <div class="veil" id="title">
+    <div class="panel box title-box">
+      <div class="kick">Welcome to The Gold Room</div>
+      <h1>Blackjack</h1>
+      <h2>Twenty-One &middot; Player vs. Dealer</h2>
+      <div class="tchips" id="tChips"></div>
+      <div class="opts">
+        <div class="opt"><span>Shoe</span><div class="chips" id="optDecks"><button data-v="1">Single Deck</button><button data-v="2">Double Deck</button><button data-v="6">6-Deck Shoe</button></div></div>
+        <div class="opt"><span>Dealing</span><div class="chips" id="optPace"><button data-v="relaxed">Relaxed</button><button data-v="steady">Steady</button><button data-v="quick">Quick</button></div></div>
+      </div>
+      <div class="purse">Your balance: <b id="tBalance">1,000</b> chips</div>
+      <div class="notice hidden" id="notice"></div>
+      <button class="big" id="bStart">Take a Seat</button>
+      <div class="links"><button id="bHow">How to Play</button> &middot; <button id="bCredits">Credits &amp; Changelog</button></div>
+      <div class="fine">Play money only. No real money, no purchases, no accounts.</div>
+      <div class="by"><span>An</span><img src="ironite-logo.png" alt="Ironite"><span>game</span></div>
+    </div>
+  </div>
+
+  <div class="veil hidden closable" id="rules">
+    <div class="panel box text-panel">
+      <h3>How to Play Blackjack</h3>
+      <p>Get closer to <b>21</b> than the dealer without going over. Number cards count their number, J, Q and K count 10, and an Ace counts 1 or 11, whichever helps. A hand with an Ace counted as 11 is called <b>soft</b>.</p>
+      <ol>
+        <li><b>Bet.</b> Click chips to build your bet in the circle, then press <b>Deal</b>. Your bet stays up for the next hand; press Clear to change it.</li>
+        <li><b>The deal.</b> You get two cards face up. The dealer gets one up and one face down. If the dealer shows an Ace or a ten, they check for Blackjack first.</li>
+        <li><b>Hit</b> takes another card. <b>Stand</b> keeps your total. Go over 21 and you <b>bust</b>, losing the bet.</li>
+        <li><b>Double Down</b> on your first two cards: double your bet and take exactly one more card.</li>
+        <li><b>Split</b> two cards of the same value into two hands, each with its own bet equal to the first. You can split up to four hands. Split Aces get one card each, and 21 after a split counts as 21, not Blackjack.</li>
+        <li><b>The dealer</b> turns over the hidden card, draws to 16 and <b>stands on all 17s</b>.</li>
+        <li><b>Payouts.</b> A win pays <b>1 to 1</b>. A Blackjack (Ace and a ten-card on your first two cards) pays <b>3 to 2</b>. A tie is a <b>push</b> and your bet comes back.</li>
+      </ol>
+      <p>You start with <b>1,000</b> play chips and your balance is saved between sessions. If you run out, the house restocks you for free. These chips have no cash value.</p>
+      <p class="muted">Keys: Enter deal &middot; H hit &middot; S stand &middot; D double &middot; P split &middot; Backspace clear bet &middot; M music &middot; F11 full screen</p>
+      <button class="big small" data-close>Back to the Table</button>
+    </div>
+  </div>
+
+  <div class="veil hidden closable" id="credits">
+    <div class="panel box text-panel">
+      <h3>Credits</h3>
+      <div class="cred">
+        <div><span>Developed &amp; Published by</span><b>Ironite</b></div>
+        <div><span>Game Design</span><b>Ironite</b></div>
+        <div><span>Card Art &amp; Illustration</span><b>Ironite</b></div>
+        <div><span>Music</span><b>Ironite</b></div>
+        <div class="tunes">"Velvet Hour", "Last Call at the Gold Room", "Midnight Felt"</div>
+        <div><span>Sound Effects</span><b>Ironite</b></div>
+        <div><span>Programming</span><b>Ironite</b></div>
+        <div><span>Typefaces</span><b>Italiana, Lora &amp; Outfit (SIL Open Font License)</b></div>
+      </div>
+      <p class="muted">Copyright &copy; 2026 Ironite. All rights reserved. Play money only: chips have no cash value.</p>
+      <h3>Changelog</h3>
+      <div id="changelog" class="changelog"></div>
+      <button class="big small" data-close>Close</button>
+    </div>
+  </div>
+</div>
+<script src="core.js"></script>
+<script src="art.js"></script>
+<script src="music.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
