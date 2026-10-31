@@ -2,9 +2,8 @@
 # Builds Blackjack - The Gold Room for Windows.
 # Output: dist/Blackjack/ with Blackjack.exe and its text files.
 #
-# The Windows icon/version resource is made by mkres, which lives in the
-# Ironite Launcher source (il/ironite-cgc/tools/mkres). Point LAUNCHER at that
-# folder. Without it, the exe still builds, just without the embedded icon.
+# Needs Go 1.24+. The icon/version tool (tools/mkres) is vendored, so this
+# works offline.
 set -euo pipefail
 cd "$(dirname "$0")"
 ROOT=$PWD
@@ -19,13 +18,9 @@ cp shell/main.go shell/platform_windows.go shell/platform_other.go "$B/"
 cp -r web "$B/web"
 printf 'module ironite/blackjack\n\ngo 1.24\n' > "$B/go.mod"
 
-if [ -n "${LAUNCHER:-}" ] && [ -d "$LAUNCHER/tools/mkres" ]; then
-  ( cd "$LAUNCHER/tools/mkres" && GOFLAGS=-mod=mod GOPROXY=off GOSUMDB=off go build -o "$B/mkres" . )
-  "$B/mkres" -version "$VERSION" -icon icon-1024.png -out "$B/rsrc_windows_amd64.syso" \
-    -name "$TITLE" -exe Blackjack.exe -internal Blackjack -identity Ironite.Blackjack -desc "$DESC"
-else
-  echo "LAUNCHER not set: building without the embedded icon/version resource." >&2
-fi
+( cd tools/mkres && GOFLAGS=-mod=vendor go build -o "$B/mkres" . )
+"$B/mkres" -version "$VERSION" -icon icon-1024.png -out "$B/rsrc_windows_amd64.syso" \
+  -name "$TITLE" -exe Blackjack.exe -internal Blackjack -identity Ironite.Blackjack -desc "$DESC"
 
 ( cd "$B" && GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -trimpath \
     -ldflags "-H windowsgui -s -w -X main.gameID=Blackjack -X \"main.title=$TITLE\" -X main.version=$VERSION" \
