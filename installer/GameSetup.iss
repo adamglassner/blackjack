@@ -2,7 +2,8 @@
 ; AppGuid is defined with Inno's escaped brace, e.g. "{{6DDF...}", which
 ; Inno reads as the literal AppId {6DDF...}.
 ; Don't compile this file directly: compile GoFishSetup.iss, BlackjackSetup.iss,
-; TexasHoldemSetup.iss or ChessSetup.iss, which set the #defines below and include it.
+; TexasHoldemSetup.iss, ChessSetup.iss or CheckersSetup.iss, which set the #defines
+; below and include it.
 ;
 ; Each game installs into <Ironite folder>\Games\<Game>, the same place the
 ; combined Ironite Setup uses, so Ironite Launcher finds it automatically.
@@ -14,9 +15,9 @@
   #error Inno Setup 6.3 or newer is required to build this installer.
 #endif
 #ifndef Bundle
-  #error Compile GoFishSetup.iss, BlackjackSetup.iss, TexasHoldemSetup.iss or ChessSetup.iss, not this template.
+  #error Compile GoFishSetup.iss, BlackjackSetup.iss, TexasHoldemSetup.iss, ChessSetup.iss or CheckersSetup.iss, not this template.
 #endif
-#define Files "..\files"
+#define Files "..\dist"
 
 [Setup]
 AppId={#AppGuid}

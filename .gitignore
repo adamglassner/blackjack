@@ -1,4 +1,4 @@
 dist/
 build/
-installer/Output/
-installer/files/
+*.syso
+mkres.tmp

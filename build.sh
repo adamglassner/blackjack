@@ -1,36 +1,34 @@
 #!/usr/bin/env bash
-# Builds Blackjack - The Gold Room for Windows.
-# Output: dist/Blackjack/ with Blackjack.exe and its text files.
-#
-# Needs Go 1.24+. The icon/version tool (tools/mkres) is vendored, so this
-# works offline.
+# Builds Blackjack for Windows (64-bit).
+# Output: dist/Games/Blackjack/ with Blackjack.exe and its text files,
+# ready for the Ironite Launcher (the release zip) or for
+# installer/BlackjackSetup.iss.
+# Needs Go 1.24+ and bash (Git Bash on Windows is fine). No C compiler needed.
 set -euo pipefail
 cd "$(dirname "$0")"
 ROOT=$PWD
-OUT=$ROOT/dist/Blackjack
-B=$ROOT/build
-TITLE="Blackjack"
-DESC="Blackjack - The Gold Room"
-VERSION=$(grep -m1 -oP '^## \[\K[0-9.]+' web/CHANGELOG.md)
+BUNDLE=Blackjack
+EXE=Blackjack
+OUT=$ROOT/dist/Games/$BUNDLE
+export GOFLAGS=-mod=mod
+rm -rf "$ROOT/dist" && mkdir -p "$OUT"
 
-rm -rf "$ROOT/dist" "$B" && mkdir -p "$OUT" "$B"
-cp shell/main.go shell/platform_windows.go shell/platform_other.go "$B/"
-cp -r web "$B/web"
-printf 'module ironite/blackjack\n\ngo 1.24\n' > "$B/go.mod"
+VERSION=$(grep -m1 -oE '^## \[[0-9.]+' CHANGELOG.md | tr -d '#[ ')
 
-( cd tools/mkres && GOFLAGS=-mod=vendor go build -o "$B/mkres" . )
-"$B/mkres" -version "$VERSION" -icon icon-1024.png -out "$B/rsrc_windows_amd64.syso" \
-  -name "$TITLE" -exe Blackjack.exe -internal Blackjack -identity Ironite.Blackjack -desc "$DESC"
+# Windows resource (icon + version info) for the .exe
+( cd tools/mkres && GOFLAGS=-mod=vendor go build -o "$ROOT/mkres.tmp" . )
+"$ROOT/mkres.tmp" -version "$VERSION" -icon icon-1024.png -out rsrc_windows_amd64.syso \
+  -name "Blackjack" -exe "$EXE.exe" -internal "$EXE" -identity "Ironite.$BUNDLE" -desc "Blackjack - The Gold Room"
+rm -f "$ROOT/mkres.tmp"
 
-( cd "$B" && GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -trimpath \
-    -ldflags "-H windowsgui -s -w -X main.gameID=Blackjack -X \"main.title=$TITLE\" -X main.version=$VERSION" \
-    -o "$OUT/Blackjack.exe" . )
+GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -trimpath \
+  -ldflags "-H windowsgui -s -w -X main.version=$VERSION" -o "$OUT/$EXE.exe" .
+rm -f rsrc_windows_amd64.syso
 
 crlf() { sed 's/\r$//; s/$/\r/' "$1" > "$2"; }
-crlf web/CHANGELOG.md "$OUT/CHANGELOG.txt"
-crlf web/fonts/OFL.txt "$OUT/OFL.txt"
-for f in README CREDITS; do
-  sed "s/@VERSION@/$VERSION/g" "$f.txt" > "$OUT/$f.tmp" && crlf "$OUT/$f.tmp" "$OUT/$f.txt" && rm "$OUT/$f.tmp"
-done
+crlf CHANGELOG.md "$OUT/CHANGELOG.txt"
+crlf assets/fonts/OFL.txt "$OUT/OFL.txt"
+sed "s/@VERSION@/$VERSION/g" README.txt  | sed 's/\r$//; s/$/\r/' > "$OUT/README.txt"
+sed "s/@VERSION@/$VERSION/g" CREDITS.txt | sed 's/\r$//; s/$/\r/' > "$OUT/CREDITS.txt"
 printf '%s\r\n' "$VERSION" > "$OUT/VERSION"
-echo "Blackjack $VERSION -> $OUT/Blackjack.exe"
+echo "Blackjack $VERSION -> $OUT/$EXE.exe"

@@ -3,6 +3,16 @@
 All notable changes to Blackjack are recorded here.
 Versions follow Semantic Versioning (MAJOR.MINOR.PATCH).
 
+## [2.0.0] - 2026-11-06
+
+### Changed
+- **Blackjack is now a native Go game.** It no longer opens in a Microsoft Edge window: it runs in its own window, drawn with Ebitengine, starts faster and needs nothing else installed.
+- Same graphics as before: the Gold Room table, the court card deck, the card back and the chips are drawn by the game with the same artwork, and the three lounge tunes and all the sound effects are the same.
+- Same rules, buttons, keys and layout: Hit, Stand, Double Down and Split up to four hands, a dealer who stands on all 17s, Blackjack paying 3 to 2, and Single Deck, Double Deck or a 6-Deck Shoe.
+- Your balance, stats and settings carry over: they are read from and saved to the same file in %APPDATA%\Ironite\Blackjack.
+- One copy runs at a time; opening Blackjack again brings the open window forward.
+- The window can be resized freely and the table stays sharp at any size and in full screen (F11).
+
 ## [1.0.0] - 2026-10-26
 
 ### Added
