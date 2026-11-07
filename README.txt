@@ -3,8 +3,8 @@ An Ironite game. (c) 2026 Ironite.
 ==================================================
 
 Open Blackjack from the Start menu (Ironite folder), your desktop, or the
-Ironite Launcher. The game opens in its own window using Microsoft Edge
-(built into Windows 10 and 11).
+Ironite Launcher. The game runs in its own window; nothing else needs to
+be installed.
 
 PLAY MONEY ONLY. Chips have no cash value. No real money, no purchases,
 no accounts. You start with 1,000 chips and the house restocks you for
